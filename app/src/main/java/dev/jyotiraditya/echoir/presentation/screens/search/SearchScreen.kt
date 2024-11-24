@@ -24,7 +24,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -37,21 +36,19 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import dev.jyotiraditya.echoir.R
-import dev.jyotiraditya.echoir.presentation.search.components.SearchResultItem
+import dev.jyotiraditya.echoir.presentation.screens.search.components.SearchResultItem
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun SearchScreen(
+    navController: NavController,
     viewModel: SearchViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
     val focusManager = LocalFocusManager.current
     val focusRequester = remember { FocusRequester() }
-
-    LaunchedEffect(Unit) {
-        focusRequester.requestFocus()
-    }
 
     Column(
         modifier = Modifier
@@ -119,7 +116,10 @@ fun SearchScreen(
                 SearchType.entries.forEach { type ->
                     FilterChip(
                         selected = state.searchType == type,
-                        onClick = { viewModel.onSearchTypeChange(type) },
+                        onClick = {
+                            viewModel.onSearchTypeChange(type)
+                            focusManager.clearFocus()
+                        },
                         label = {
                             Text(
                                 text = type.title,
@@ -163,7 +163,15 @@ fun SearchScreen(
             else -> {
                 LazyColumn {
                     items(state.results) { result ->
-                        SearchResultItem(result)
+                        SearchResultItem(
+                            result = result,
+                            onClick = {
+                                navController.currentBackStackEntry
+                                    ?.savedStateHandle
+                                    ?.set("result", result)
+                                navController.navigate("details/${state.searchType.name}/${result.id}")
+                            }
+                        )
                     }
                 }
             }

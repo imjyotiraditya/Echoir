@@ -1,7 +1,8 @@
-package dev.jyotiraditya.echoir.presentation.search.components
+package dev.jyotiraditya.echoir.presentation.screens.search.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,8 +25,12 @@ import dev.jyotiraditya.echoir.R
 import dev.jyotiraditya.echoir.domain.model.SearchResult
 
 @Composable
-fun SearchResultItem(result: SearchResult) {
+fun SearchResultItem(
+    result: SearchResult,
+    onClick: () -> Unit
+) {
     ListItem(
+        modifier = Modifier.clickable(onClick = onClick),
         overlineContent = {
             result.formats?.let { formats ->
                 Text(

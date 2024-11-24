@@ -26,4 +26,12 @@ class ApiService @Inject constructor() {
                 header("X-API-Key", API_KEY)
             }.body()
         }
+
+    suspend fun getAlbumTracks(albumId: Long): List<SearchResultDto> =
+        withContext(Dispatchers.IO) {
+            client.get("$BASE_URL/album/tracks") {
+                parameter("id", albumId)
+                header("X-API-Key", API_KEY)
+            }.body()
+        }
 }

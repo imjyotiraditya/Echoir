@@ -13,4 +13,8 @@ class MusicRepositoryImpl @Inject constructor(
     override suspend fun search(query: String, type: SearchType): List<SearchResult> =
         apiService.search(query, type.name.lowercase())
             .map { it.toDomain() }
+
+    override suspend fun getAlbumTracks(albumId: Long): List<SearchResult> =
+        apiService.getAlbumTracks(albumId)
+            .map { it.toDomain() }
 }
