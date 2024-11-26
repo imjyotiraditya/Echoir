@@ -1,0 +1,70 @@
+# Gradle
+.gradle/
+**/build/
+!src/**/build/
+.gradle.kts*
+
+# Local configs
+local.properties
+keystore.properties
+
+# Logs
+*.log
+*.hprof
+
+# Android Studio
+captures/
+.externalNativeBuild/
+.cxx/
+*.apk
+*.aab
+output-metadata.json
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+modules.xml
+.idea/caches/
+.idea/libraries/
+.idea/shelf/
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/.name
+.idea/compiler.xml
+.idea/copyright/profiles_settings.xml
+.idea/encodings.xml
+.idea/misc.xml
+.idea/modules.xml
+.idea/scopes/scope_settings.xml
+.idea/dictionaries
+.idea/vcs.xml
+.idea/jsLibraryMappings.xml
+.idea/datasources.xml
+.idea/dataSources.ids
+.idea/sqlDataSources.xml
+.idea/dynamic.xml
+.idea/uiDesigner.xml
+.idea/assetWizardSettings.xml
+.idea/gradle.xml
+.idea/jarRepositories.xml
+.idea/navEditor.xml
+
+# Keystore
+*.jks
+*.keystore
+*.store
+
+# Google Services
+google-services.json
+firebase-*.json
+
+# OS-specific
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
