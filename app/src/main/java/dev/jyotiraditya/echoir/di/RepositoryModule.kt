@@ -7,6 +7,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import dev.jyotiraditya.echoir.data.local.dao.DownloadDao
+import dev.jyotiraditya.echoir.data.media.FFmpegProcessor
 import dev.jyotiraditya.echoir.data.remote.api.ApiService
 import dev.jyotiraditya.echoir.data.repository.DownloadRepositoryImpl
 import dev.jyotiraditya.echoir.data.repository.MusicRepositoryImpl
@@ -28,13 +29,23 @@ object RepositoryModule {
 
     @Provides
     @Singleton
+    fun provideFFmpegProcessor(): FFmpegProcessor = FFmpegProcessor()
+
+    @Provides
+    @Singleton
     fun provideDownloadRepository(
         apiService: ApiService,
         downloadDao: DownloadDao,
         settingsRepository: SettingsRepository,
+        ffmpegProcessor: FFmpegProcessor,
         @ApplicationContext context: Context
-    ): DownloadRepository =
-        DownloadRepositoryImpl(apiService, downloadDao, settingsRepository, context)
+    ): DownloadRepository = DownloadRepositoryImpl(
+        apiService = apiService,
+        downloadDao = downloadDao,
+        settingsRepository = settingsRepository,
+        ffmpegProcessor = ffmpegProcessor,
+        context = context
+    )
 
     @Provides
     @Singleton

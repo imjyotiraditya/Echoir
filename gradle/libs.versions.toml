@@ -9,6 +9,7 @@ datastore = "1.1.1"
 documentfile = "1.1.0-alpha01"
 dependency-updates = "0.51.0"
 espresso-core = "3.6.1"
+ffmpeg = "6.0-2"
 hilt = "2.52"
 hilt-androidx = "1.2.0"
 junit = "4.13.2"
@@ -52,6 +53,7 @@ androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-toolin
 androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "work-runtime-ktx" }
 coil3-coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
 coil3-coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coil" }
+ffmpeg = { module = "com.arthenica:ffmpeg-kit-min", version.ref = "ffmpeg" }
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
 hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hilt-androidx" }

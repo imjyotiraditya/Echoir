@@ -5,6 +5,7 @@ import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.jyotiraditya.echoir.data.local.dao.DownloadDao
+import dev.jyotiraditya.echoir.data.media.FFmpegProcessor
 import dev.jyotiraditya.echoir.data.remote.api.ApiService
 import dev.jyotiraditya.echoir.data.remote.mapper.PlaybackMapper.toDomain
 import dev.jyotiraditya.echoir.domain.model.Download
@@ -26,6 +27,7 @@ class DownloadRepositoryImpl @Inject constructor(
     private val apiService: ApiService,
     private val downloadDao: DownloadDao,
     private val settingsRepository: SettingsRepository,
+    private val ffmpegProcessor: FFmpegProcessor,
     @ApplicationContext private val context: Context
 ) : DownloadRepository {
 
@@ -76,10 +78,10 @@ class DownloadRepositoryImpl @Inject constructor(
                 val directory = DocumentFile.fromTreeUri(context, uri)
                     ?: throw IOException("Could not access directory")
 
-                val output = directory.createFile("*/*", outputFile)
-                    ?: throw IOException("Could not create output file")
+                val tempMerged = directory.createFile("*/*", "temp_$outputFile")
+                    ?: throw IOException("Could not create temp merged file")
 
-                context.contentResolver.openOutputStream(output.uri)?.use { outputStream ->
+                context.contentResolver.openOutputStream(tempMerged.uri)?.use { outputStream ->
                     files.forEach { inputPath ->
                         val inputUri = Uri.parse(inputPath)
                         context.contentResolver.openInputStream(inputUri)?.use { inputStream ->
@@ -88,26 +90,43 @@ class DownloadRepositoryImpl @Inject constructor(
                     }
                 } ?: throw IOException("Could not open output stream")
 
-                // Clean up source files
+                val finalOutput = directory.createFile("*/*", outputFile)
+                    ?: throw IOException("Could not create final output file")
+
+                ffmpegProcessor.processMergedFile(
+                    tempMerged.uri.toString(),
+                    finalOutput.uri.toString()
+                )
+
+                // Clean up
+                tempMerged.delete()
                 files.forEach { inputPath ->
                     val inputUri = Uri.parse(inputPath)
                     DocumentFile.fromSingleUri(context, inputUri)?.delete()
                 }
 
-                output.uri.toString()
+                finalOutput.uri.toString()
             } else {
                 // Handle merge in default directory
-                val output = File(context.getExternalFilesDir(null), outputFile)
-                output.outputStream().use { outputStream ->
+                val tempMerged = File(context.getExternalFilesDir(null), "temp_$outputFile")
+                tempMerged.outputStream().use { outputStream ->
                     files.forEach { input ->
                         File(input).inputStream().use { it.copyTo(outputStream) }
                     }
                 }
 
-                // Clean up source files
+                val finalOutput = File(context.getExternalFilesDir(null), outputFile)
+
+                ffmpegProcessor.processMergedFile(
+                    tempMerged.absolutePath,
+                    finalOutput.absolutePath
+                )
+
+                // Clean up
+                tempMerged.delete()
                 files.forEach { File(it).delete() }
 
-                output.absolutePath
+                finalOutput.absolutePath
             }
         }
     }
