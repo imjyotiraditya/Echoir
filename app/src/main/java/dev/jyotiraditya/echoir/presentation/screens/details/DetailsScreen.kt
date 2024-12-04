@@ -154,7 +154,14 @@ fun DetailsScreen(
                 downloadOptions.forEach { config ->
                     FilterChip(
                         selected = false,
-                        onClick = { viewModel.downloadAlbum(config) },
+                        onClick = {
+                            viewModel.downloadAlbum(config)
+                            Toast.makeText(
+                                context,
+                                "Started downloading in ${config.label} quality",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        },
                         label = {
                             Text(
                                 text = when (config.quality) {
