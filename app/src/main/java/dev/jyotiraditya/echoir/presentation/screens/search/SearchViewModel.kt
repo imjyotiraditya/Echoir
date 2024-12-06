@@ -46,6 +46,49 @@ class SearchViewModel @Inject constructor(
         }
     }
 
+    fun onSearchFilterQualityAdded(quality: SearchQuality) {
+        _state.update {
+            it.apply { searchFilter.qualities.add(quality) }
+        }
+        onSearchFilterChanged()
+    }
+
+    fun onSearchFilterQualityRemoved(quality: SearchQuality) {
+        _state.update {
+            it.apply { searchFilter.qualities.remove(quality) }
+        }
+        onSearchFilterChanged()
+    }
+
+    fun onSearchContentFilterAdded(contentFilter: SearchContentFilter) {
+        _state.update {
+            it.apply { searchFilter.contentFilters.add(contentFilter) }
+        }
+        onSearchFilterChanged()
+    }
+
+    fun onSearchContentFilterRemoved(contentFilter: SearchContentFilter) {
+        _state.update {
+            it.apply { searchFilter.contentFilters.remove(contentFilter) }
+        }
+        onSearchFilterChanged()
+    }
+
+    private fun onSearchFilterChanged() {
+        if (_state.value.results.isNotEmpty()) {
+            viewModelScope.launch {
+                _state.update {
+                    it.copy(
+                        filteredResults = searchUseCase.filterSearchResults(
+                            _state.value.results,
+                            _state.value.searchFilter
+                        )
+                    )
+                }
+            }
+        }
+    }
+
     fun search() {
         val currentState = _state.value
 
@@ -65,6 +108,10 @@ class SearchViewModel @Inject constructor(
                 _state.update {
                     it.copy(
                         results = results,
+                        filteredResults = searchUseCase.filterSearchResults(
+                            results,
+                            _state.value.searchFilter
+                        ),
                         status = if (results.isEmpty()) SearchStatus.NoResults else SearchStatus.Success
                     )
                 }
