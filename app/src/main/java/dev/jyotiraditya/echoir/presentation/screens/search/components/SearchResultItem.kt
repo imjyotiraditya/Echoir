@@ -29,11 +29,13 @@ fun SearchResultItem(
         overlineContent = {
             result.formats?.let { formats ->
                 Text(
-                    text = when {
-                        formats.contains("HIRES_LOSSLESS") -> "HI-RES"
-                        formats.contains("LOSSLESS") -> "LOSSLESS"
-                        formats.contains("DOLBY_ATMOS") -> "DOLBY"
-                        else -> "UNKNOWN"
+                    text = formats.joinToString(separator = " / ") {
+                        when (it) {
+                            "HIRES_LOSSLESS" -> "HI-RES"
+                            "LOSSLESS" -> "LOSSLESS"
+                            "DOLBY_ATMOS" -> "DOLBY"
+                            else -> "UNKNOWN"
+                        }
                     },
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.secondary
