@@ -6,9 +6,6 @@ A Material You music downloader for Android
 ![Kotlin](https://ziadoua.github.io/m3-Markdown-Badges/badges/Kotlin/kotlin2.svg)
 ![stars](https://m3-markdown-badges.vercel.app/stars/9/2/imjyotiraditya/echoir)
 
-> [!WARNING]
-> This is the successor to FluidAC, completely rewritten with new features and improvements. Previous FluidAC releases are no longer functional due to API changes.
-
 ## About
 
 Echoir (from Echo + Choir) is a music downloader that aims to provide high-quality audio formats while adhering to Material Design principles. The name also plays on the phrase "which will fall soon", reflecting the ephemeral nature of software projects.
@@ -117,3 +114,21 @@ Echoir is the successor to FluidAC, reimagined with major improvements:
 
 Note: For Lossless CD Quality and Dolby Atmos formats, direct downloads are used without any FFmpeg processing.
 </details>
+
+## Related Projects & Recommendations
+
+### Missing or Unsatisfactory Lyrics?
+
+If you're not satisfied with the embedded lyrics or they're missing, try our friend project:
+- [SongSync](https://github.com/Lambada10/SongSync/releases/latest) - A tool for managing and syncing lyrics
+
+### Music Players
+
+Looking for a great music player? Here are some recommendations:
+
+- **Material Design 3 Experience:**
+  - [Gramophone](https://github.com/AkaneTan/Gramophone) - A modern offline music player following Material Design 3 principles
+
+- **Apple Music Design:**
+  - [AccordLegacy](https://github.com/FoedusProgramme/AccordLegacy) - A music player with Apple Music-inspired design
+  - Available through the [Light Summer](https://t.me/light_summer) channel
