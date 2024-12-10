@@ -276,21 +276,33 @@ fun DetailsScreen(
                                     )
                                 },
                                 trailingContent = {
-                                    Column(
-                                        horizontalAlignment = Alignment.End,
-                                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                                    Row(
+                                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                                        verticalAlignment = Alignment.CenterVertically
                                     ) {
-                                        Text(
-                                            text = track.duration,
-                                            style = MaterialTheme.typography.bodySmall
-                                        )
-                                        if (track.explicit) {
-                                            Icon(
-                                                painter = painterResource(R.drawable.ic_explicit),
-                                                contentDescription = "Explicit",
-                                                modifier = Modifier.size(16.dp),
+                                        Column(
+                                            horizontalAlignment = Alignment.End,
+                                            verticalArrangement = Arrangement.spacedBy(4.dp)
+                                        ) {
+                                            Text(
+                                                text = track.duration,
+                                                style = MaterialTheme.typography.bodySmall
                                             )
+                                            if (track.explicit) {
+                                                Icon(
+                                                    painter = painterResource(R.drawable.ic_explicit),
+                                                    contentDescription = "Explicit",
+                                                    modifier = Modifier.size(16.dp),
+                                                )
+                                            }
                                         }
+
+                                        Icon(
+                                            painter = painterResource(R.drawable.ic_download),
+                                            contentDescription = "Download options",
+                                            modifier = Modifier.size(20.dp),
+                                            tint = MaterialTheme.colorScheme.primary
+                                        )
                                     }
                                 },
                                 modifier = Modifier
