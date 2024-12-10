@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ContainedLoadingIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
@@ -24,7 +25,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -46,7 +51,10 @@ import dev.jyotiraditya.echoir.domain.model.SearchResult
 import dev.jyotiraditya.echoir.presentation.components.TrackBottomSheet
 import dev.jyotiraditya.echoir.presentation.components.TrackCover
 
-@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(
+    ExperimentalLayoutApi::class, ExperimentalMaterial3ExpressiveApi::class,
+    ExperimentalMaterial3Api::class
+)
 @Composable
 fun DetailsScreen(
     result: SearchResult,
@@ -152,45 +160,57 @@ fun DetailsScreen(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 downloadOptions.forEach { config ->
-                    FilterChip(
-                        selected = false,
-                        onClick = {
-                            viewModel.downloadAlbum(config)
-                            Toast.makeText(
-                                context,
-                                "Started downloading in ${config.label} quality",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                    TooltipBox(
+                        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(),
+                        tooltip = {
+                            PlainTooltip {
+                                Text(
+                                    text = config.summary
+                                )
+                            }
                         },
-                        label = {
-                            Text(
-                                text = when (config.quality) {
-                                    "DOLBY_ATMOS" -> if (config.ac4) "AC4" else "EAC3"
-                                    else -> config.label
-                                },
-                                style = MaterialTheme.typography.labelLarge
-                            )
-                        },
-                        leadingIcon = {
-                            Icon(
-                                painter = painterResource(R.drawable.ic_download),
-                                contentDescription = null,
-                                modifier = Modifier.size(18.dp)
-                            )
-                        },
-                        colors = FilterChipDefaults.filterChipColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-                            labelColor = MaterialTheme.colorScheme.onSurface,
-                            iconColor = MaterialTheme.colorScheme.onSurface,
-                            selectedContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest
-                        ),
-                        border = FilterChipDefaults.filterChipBorder(
-                            borderColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.2f),
-                            enabled = true,
-                            selected = false
-                        ),
-                        modifier = Modifier.height(32.dp)
-                    )
+                        state = rememberTooltipState()
+                    ) {
+                        FilterChip(
+                            selected = false,
+                            onClick = {
+                                viewModel.downloadAlbum(config)
+                                Toast.makeText(
+                                    context,
+                                    "Started downloading in ${config.label} quality",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            },
+                            label = {
+                                Text(
+                                    text = when (config.quality) {
+                                        "DOLBY_ATMOS" -> if (config.ac4) "AC4" else "EAC3"
+                                        else -> config.label
+                                    },
+                                    style = MaterialTheme.typography.labelLarge
+                                )
+                            },
+                            leadingIcon = {
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_download),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                            },
+                            colors = FilterChipDefaults.filterChipColors(
+                                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                                labelColor = MaterialTheme.colorScheme.onSurface,
+                                iconColor = MaterialTheme.colorScheme.onSurface,
+                                selectedContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest
+                            ),
+                            border = FilterChipDefaults.filterChipBorder(
+                                borderColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.2f),
+                                enabled = true,
+                                selected = false
+                            ),
+                            modifier = Modifier.height(32.dp)
+                        )
+                    }
                 }
             }
         }

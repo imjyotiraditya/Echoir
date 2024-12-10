@@ -73,7 +73,8 @@ import dev.jyotiraditya.echoir.presentation.navigation.Route
 import dev.jyotiraditya.echoir.presentation.screens.search.components.SearchResultItem
 import kotlin.math.absoluteValue
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalLayoutApi::class,
+@OptIn(
+    ExperimentalMaterial3ExpressiveApi::class, ExperimentalLayoutApi::class,
     ExperimentalMaterial3Api::class
 )
 @Composable
@@ -205,7 +206,13 @@ fun SearchScreen(
                 )
                 TooltipBox(
                     positionProvider = TooltipDefaults.rememberTooltipPositionProvider(),
-                    tooltip = { PlainTooltip { Text("Filter results") } },
+                    tooltip = {
+                        PlainTooltip {
+                            Text(
+                                text = "Filter results"
+                            )
+                        }
+                    },
                     state = rememberTooltipState()
                 ) {
                     IconButton(

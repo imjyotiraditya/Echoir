@@ -10,5 +10,5 @@ interface SearchRepository {
     suspend fun filterSearchResults(
         results: List<SearchResult>,
         filter: SearchFilter
-    ) : List<SearchResult>
+    ): List<SearchResult>
 }

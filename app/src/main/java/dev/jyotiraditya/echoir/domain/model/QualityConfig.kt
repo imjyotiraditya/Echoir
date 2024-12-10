@@ -4,26 +4,31 @@ sealed class QualityConfig(
     val label: String,
     val quality: String,
     val ac4: Boolean = false,
-    val immersive: Boolean = true
+    val immersive: Boolean = true,
+    val summary: String
 ) {
     data object HiRes : QualityConfig(
         label = "Hi-Res",
-        quality = "HI_RES_LOSSLESS"
+        quality = "HI_RES_LOSSLESS",
+        summary = "24-bit/up to 192kHz FLAC format with maximum audio quality"
     )
 
     data object Lossless : QualityConfig(
         label = "Lossless",
-        quality = "LOSSLESS"
+        quality = "LOSSLESS",
+        summary = "16-bit/44.1kHz FLAC format with CD quality"
     )
 
     data object DolbyAtmosAC3 : QualityConfig(
         label = "Dolby Atmos (AC-3)",
         quality = "DOLBY_ATMOS",
+        summary = "Enhanced AC-3 format with Dolby Atmos spatial audio"
     )
 
     data object DolbyAtmosAC4 : QualityConfig(
         label = "Dolby Atmos (AC-4)",
         quality = "DOLBY_ATMOS",
         ac4 = true,
+        summary = "AC-4 format with Dolby Atmos spatial audio, improved efficiency"
     )
 }
