@@ -9,9 +9,23 @@ on:
         type: boolean
         default: false
 
+      abi:
+        description: 'Select ABI to upload'
+        required: true
+        type: choice
+        options:
+          - all
+          - arm64-v8a
+          - armeabi-v7a
+          - x86
+          - x86_64
+          - universal
+        default: 'all'
+
 jobs:
   build:
     runs-on: ubuntu-22.04
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -21,7 +35,6 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-          cache: gradle
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
@@ -53,8 +66,9 @@ jobs:
         if: ${{ !inputs.release }}
         uses: actions/upload-artifact@v4
         with:
-          name: echoir-apks
-          path: app/build/outputs/apk/release/*arm64-v8a*.apk
+          name: echoir-${{ inputs.abi }}-apks
+          path: |
+            ${{ inputs.abi == 'all' && 'app/build/outputs/apk/release/*.apk' || format('app/build/outputs/apk/release/*{0}*.apk', inputs.abi) }}
           retention-days: 7
 
       - name: Create Release
