@@ -36,6 +36,8 @@ fun DownloadItem(
                     "HI_RES_LOSSLESS" -> "HI-RES"
                     "LOSSLESS" -> "LOSSLESS"
                     "DOLBY_ATMOS" -> if (download.isAc4) "DOLBY ATMOS (AC-4)" else "DOLBY ATMOS (AC-3)"
+                    "HIGH" -> "AAC 320"
+                    "LOW" -> "AAC 96"
                     else -> "UNKNOWN"
                 },
                 style = MaterialTheme.typography.labelSmall,

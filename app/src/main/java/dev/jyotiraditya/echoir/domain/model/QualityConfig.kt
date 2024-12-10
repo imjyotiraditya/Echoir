@@ -19,6 +19,18 @@ sealed class QualityConfig(
         summary = "16-bit/44.1kHz FLAC format with CD quality"
     )
 
+    data object AAC320 : QualityConfig(
+        label = "AAC 320",
+        quality = "HIGH",
+        summary = "High quality lossy compression with 320kbps bitrate, suitable for most listening"
+    )
+
+    data object AAC96 : QualityConfig(
+        label = "AAC 96",
+        quality = "LOW",
+        summary = "Standard quality lossy compression with 96kbps bitrate, optimal for storage saving"
+    )
+
     data object DolbyAtmosAC3 : QualityConfig(
         label = "Dolby Atmos (AC-3)",
         quality = "DOLBY_ATMOS",

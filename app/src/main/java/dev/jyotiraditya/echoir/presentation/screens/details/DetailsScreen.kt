@@ -5,31 +5,21 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ContainedLoadingIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Text
-import androidx.compose.material3.TooltipBox
-import androidx.compose.material3.TooltipDefaults
-import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -46,15 +36,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import dev.jyotiraditya.echoir.R
-import dev.jyotiraditya.echoir.domain.model.QualityConfig
 import dev.jyotiraditya.echoir.domain.model.SearchResult
+import dev.jyotiraditya.echoir.presentation.components.DownloadOptions
 import dev.jyotiraditya.echoir.presentation.components.TrackBottomSheet
 import dev.jyotiraditya.echoir.presentation.components.TrackCover
 
-@OptIn(
-    ExperimentalLayoutApi::class, ExperimentalMaterial3ExpressiveApi::class,
-    ExperimentalMaterial3Api::class
-)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun DetailsScreen(
     result: SearchResult,
@@ -65,27 +52,6 @@ fun DetailsScreen(
 
     var selectedTrack by remember { mutableStateOf<SearchResult?>(null) }
     var showBottomSheet by remember { mutableStateOf(false) }
-
-    val downloadOptions = remember(result) {
-        mutableListOf<QualityConfig>().apply {
-            result.modes?.let { modes ->
-                result.formats?.let { formats ->
-                    if (modes.contains("DOLBY_ATMOS") && formats.contains("DOLBY_ATMOS")) {
-                        add(QualityConfig.DolbyAtmosAC3)
-                        add(QualityConfig.DolbyAtmosAC4)
-                    }
-                    if (modes.contains("STEREO")) {
-                        if (formats.contains("HIRES_LOSSLESS")) {
-                            add(QualityConfig.HiRes)
-                        }
-                        if (formats.contains("LOSSLESS") && !modes.contains("DOLBY_ATMOS")) {
-                            add(QualityConfig.Lossless)
-                        }
-                    }
-                }
-            }
-        }
-    }
 
     LaunchedEffect(result) {
         viewModel.initializeWithItem(result)
@@ -155,64 +121,18 @@ fun DetailsScreen(
                 }
             }
 
-            FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                downloadOptions.forEach { config ->
-                    TooltipBox(
-                        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(),
-                        tooltip = {
-                            PlainTooltip {
-                                Text(
-                                    text = config.summary
-                                )
-                            }
-                        },
-                        state = rememberTooltipState()
-                    ) {
-                        FilterChip(
-                            selected = false,
-                            onClick = {
-                                viewModel.downloadAlbum(config)
-                                Toast.makeText(
-                                    context,
-                                    "Started downloading in ${config.label} quality",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            },
-                            label = {
-                                Text(
-                                    text = when (config.quality) {
-                                        "DOLBY_ATMOS" -> if (config.ac4) "AC4" else "EAC3"
-                                        else -> config.label
-                                    },
-                                    style = MaterialTheme.typography.labelLarge
-                                )
-                            },
-                            leadingIcon = {
-                                Icon(
-                                    painter = painterResource(R.drawable.ic_download),
-                                    contentDescription = null,
-                                    modifier = Modifier.size(18.dp)
-                                )
-                            },
-                            colors = FilterChipDefaults.filterChipColors(
-                                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-                                labelColor = MaterialTheme.colorScheme.onSurface,
-                                iconColor = MaterialTheme.colorScheme.onSurface,
-                                selectedContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest
-                            ),
-                            border = FilterChipDefaults.filterChipBorder(
-                                borderColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.2f),
-                                enabled = true,
-                                selected = false
-                            ),
-                            modifier = Modifier.height(32.dp)
-                        )
-                    }
+            DownloadOptions(
+                formats = result.formats,
+                modes = result.modes,
+                onOptionSelected = { config ->
+                    viewModel.downloadAlbum(config)
+                    Toast.makeText(
+                        context,
+                        "Started downloading in ${config.label} quality",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
-            }
+            )
         }
 
         HorizontalDivider(
