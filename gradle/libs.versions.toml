@@ -1,5 +1,5 @@
 [versions]
-activity-compose = "1.10.0-beta01"
+activity-compose = "1.10.0-rc01"
 agp = "8.9.0-alpha04"
 arthenica-smartexceptions = "0.2.1"
 coil = "3.0.4"
