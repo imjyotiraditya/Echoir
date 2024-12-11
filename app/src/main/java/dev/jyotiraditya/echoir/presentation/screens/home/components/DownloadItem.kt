@@ -9,10 +9,15 @@ import androidx.compose.material.icons.outlined.Done
 import androidx.compose.material.icons.outlined.Error
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -21,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import dev.jyotiraditya.echoir.R
 import dev.jyotiraditya.echoir.domain.model.Download
 import dev.jyotiraditya.echoir.domain.model.DownloadStatus
+import dev.jyotiraditya.echoir.presentation.components.ErrorDetailsBottomSheet
 import dev.jyotiraditya.echoir.presentation.components.TrackCover
 
 @Composable
@@ -28,6 +34,8 @@ fun DownloadItem(
     download: Download,
     modifier: Modifier = Modifier
 ) {
+    var showErrorDetails by remember { mutableStateOf(false) }
+
     ListItem(
         modifier = modifier,
         overlineContent = {
@@ -104,12 +112,16 @@ fun DownloadItem(
                     }
 
                     DownloadStatus.FAILED -> {
-                        Icon(
-                            imageVector = Icons.Outlined.Error,
-                            contentDescription = null,
-                            modifier = Modifier.size(16.dp),
-                            tint = MaterialTheme.colorScheme.error
-                        )
+                        IconButton(
+                            onClick = { showErrorDetails = true }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Outlined.Error,
+                                contentDescription = "Show error details",
+                                modifier = Modifier.size(16.dp),
+                                tint = MaterialTheme.colorScheme.error
+                            )
+                        }
                     }
                 }
                 Text(
@@ -126,4 +138,11 @@ fun DownloadItem(
             }
         }
     )
+
+    if (showErrorDetails) {
+        ErrorDetailsBottomSheet(
+            download = download,
+            onDismiss = { showErrorDetails = false }
+        )
+    }
 }
