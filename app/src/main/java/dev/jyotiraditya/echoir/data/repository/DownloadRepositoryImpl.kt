@@ -3,6 +3,7 @@ package dev.jyotiraditya.echoir.data.repository
 import android.content.Context
 import android.media.MediaScannerConnection
 import android.net.Uri
+import android.os.Build
 import android.os.Environment
 import android.util.Log
 import androidx.documentfile.provider.DocumentFile
@@ -186,8 +187,29 @@ class DownloadRepositoryImpl @Inject constructor(
 
             finalPath
         }.onFailure { error ->
-            Log.e(TAG, "Download process failed", error)
-            updateDownloadStatus(downloadId, DownloadStatus.FAILED)
+            val errorMessage = error.message ?: "Unknown error occurred"
+            val errorDetails = error.stackTraceToString()
+
+            Log.e(
+                TAG, """
+                Download failed:
+                Track ID: $trackId
+                Quality: $quality
+                Device: ${Build.MANUFACTURER} ${Build.MODEL}
+                Android: ${Build.VERSION.SDK_INT}
+                Error: $errorMessage
+                Stack trace:
+                $errorDetails
+            """.trimIndent()
+            )
+
+            downloadDao.update(
+                downloadDao.getDownloadById(downloadId)?.copy(
+                    status = DownloadStatus.FAILED,
+                    errorMessage = errorMessage,
+                    errorDetails = errorDetails
+                ) ?: throw error
+            )
         }
     }
 

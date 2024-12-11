@@ -107,8 +107,18 @@ class DownloadWorker @AssistedInject constructor(
                 Result.failure()
             }
         } catch (e: Exception) {
+            val errorMessage = e.message ?: "Unknown error"
+            val errorDetails = e.stackTraceToString()
+
             val download = downloadRepository.getDownloadById(downloadId)
             download?.let {
+                downloadRepository.saveDownload(
+                    it.copy(
+                        status = DownloadStatus.FAILED,
+                        errorMessage = errorMessage,
+                        errorDetails = errorDetails
+                    )
+                )
                 notificationManager.showErrorNotification(
                     downloadId = downloadId,
                     title = it.title

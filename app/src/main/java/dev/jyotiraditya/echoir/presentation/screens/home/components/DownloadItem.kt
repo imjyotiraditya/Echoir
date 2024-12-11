@@ -1,5 +1,6 @@
 package dev.jyotiraditya.echoir.presentation.screens.home.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,6 +14,10 @@ import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -21,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import dev.jyotiraditya.echoir.R
 import dev.jyotiraditya.echoir.domain.model.Download
 import dev.jyotiraditya.echoir.domain.model.DownloadStatus
+import dev.jyotiraditya.echoir.presentation.components.ErrorDetailsBottomSheet
 import dev.jyotiraditya.echoir.presentation.components.TrackCover
 
 @Composable
@@ -28,8 +34,17 @@ fun DownloadItem(
     download: Download,
     modifier: Modifier = Modifier
 ) {
+    var showErrorDetails by remember { mutableStateOf(false) }
+
     ListItem(
-        modifier = modifier,
+        modifier = modifier
+            .then(
+                if (download.status == DownloadStatus.FAILED) {
+                    Modifier.clickable { showErrorDetails = true }
+                } else {
+                    Modifier
+                }
+            ),
         overlineContent = {
             Text(
                 text = when (download.quality) {
@@ -106,7 +121,7 @@ fun DownloadItem(
                     DownloadStatus.FAILED -> {
                         Icon(
                             imageVector = Icons.Outlined.Error,
-                            contentDescription = null,
+                            contentDescription = "Show error details",
                             modifier = Modifier.size(16.dp),
                             tint = MaterialTheme.colorScheme.error
                         )
@@ -126,4 +141,11 @@ fun DownloadItem(
             }
         }
     )
+
+    if (showErrorDetails) {
+        ErrorDetailsBottomSheet(
+            download = download,
+            onDismiss = { showErrorDetails = false }
+        )
+    }
 }
