@@ -9,6 +9,12 @@ on:
         type: boolean
         default: false
 
+      draft:
+        description: 'Create as draft?'
+        required: true
+        type: boolean
+        default: true
+
       abi:
         description: 'Select ABI to upload'
         required: true
@@ -79,5 +85,6 @@ jobs:
           VERSION=$(grep -A5 'defaultConfig {' app/build.gradle.kts | grep 'versionName' | awk -F '"' '{print $2}')
           gh release create "v${VERSION}" \
             --title "Echoir v${VERSION}" \
-            --notes "Release v${VERSION}" \
+            --generate-notes \
+            ${{ inputs.draft && '--draft' || '' }} \
             app/build/outputs/apk/release/*.apk
