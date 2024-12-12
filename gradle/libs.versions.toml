@@ -1,6 +1,6 @@
 [versions]
 activity-compose = "1.10.0-rc01"
-agp = "8.9.0-alpha04"
+agp = "8.9.0-alpha05"
 arthenica-smartexceptions = "0.2.1"
 coil = "3.0.4"
 compose-bom = "2024.12.01"
