@@ -1,3 +1,5 @@
+![Echoir Banner](.github/assets/banner.png)
+
 # Echoir
 
 A Material You music downloader for Android
