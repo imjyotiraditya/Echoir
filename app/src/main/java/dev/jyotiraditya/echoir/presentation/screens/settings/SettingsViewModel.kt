@@ -8,6 +8,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.jyotiraditya.echoir.data.local.dao.DownloadDao
 import dev.jyotiraditya.echoir.domain.model.FileNamingFormat
+import dev.jyotiraditya.echoir.domain.model.MetadataField
 import dev.jyotiraditya.echoir.domain.usecase.SettingsUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -31,11 +32,13 @@ class SettingsViewModel @Inject constructor(
             val dir = settingsUseCase.getOutputDirectory()
             val format = settingsUseCase.getFileNamingFormat()
             val region = settingsUseCase.getRegion()
+            val metadataFields = settingsUseCase.getSelectedMetadataFields()
             _state.update {
                 it.copy(
                     outputDirectory = dir,
                     fileNamingFormat = format,
-                    region = region
+                    region = region,
+                    selectedMetadataFields = metadataFields
                 )
             }
         }
@@ -71,6 +74,13 @@ class SettingsViewModel @Inject constructor(
                     region = region
                 )
             }
+        }
+    }
+
+    fun updateMetadataFields(fields: Set<MetadataField>) {
+        viewModelScope.launch {
+            settingsUseCase.setSelectedMetadataFields(fields)
+            _state.update { it.copy(selectedMetadataFields = fields) }
         }
     }
 

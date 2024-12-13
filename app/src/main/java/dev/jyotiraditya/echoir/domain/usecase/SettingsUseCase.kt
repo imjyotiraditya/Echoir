@@ -1,6 +1,7 @@
 package dev.jyotiraditya.echoir.domain.usecase
 
 import dev.jyotiraditya.echoir.domain.model.FileNamingFormat
+import dev.jyotiraditya.echoir.domain.model.MetadataField
 import dev.jyotiraditya.echoir.domain.repository.SettingsRepository
 import javax.inject.Inject
 
@@ -19,4 +20,10 @@ class SettingsUseCase @Inject constructor(
     suspend fun getRegion(): String = repository.getRegion()
 
     suspend fun setRegion(region: String) = repository.setRegion(region)
+
+    suspend fun getSelectedMetadataFields(): Set<MetadataField> =
+        repository.getSelectedMetadataFields()
+
+    suspend fun setSelectedMetadataFields(fields: Set<MetadataField>) =
+        repository.setSelectedMetadataFields(fields)
 }

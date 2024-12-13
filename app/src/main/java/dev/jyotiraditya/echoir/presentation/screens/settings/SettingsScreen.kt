@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.EditNote
 import androidx.compose.material.icons.outlined.Folder
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.LocalCafe
@@ -32,12 +33,15 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import dev.jyotiraditya.echoir.BuildConfig
 import dev.jyotiraditya.echoir.R
 import dev.jyotiraditya.echoir.data.utils.extensions.toDisplayPath
+import dev.jyotiraditya.echoir.domain.model.MetadataCategory
+import dev.jyotiraditya.echoir.domain.model.MetadataField
 import dev.jyotiraditya.echoir.domain.model.Region
 import dev.jyotiraditya.echoir.presentation.components.preferences.PreferenceCategory
 import dev.jyotiraditya.echoir.presentation.components.preferences.PreferenceItem
 import dev.jyotiraditya.echoir.presentation.components.preferences.PreferencePosition
 import dev.jyotiraditya.echoir.presentation.screens.settings.components.CrucialSettingsDialog
 import dev.jyotiraditya.echoir.presentation.screens.settings.components.FileNamingFormatDialog
+import dev.jyotiraditya.echoir.presentation.screens.settings.components.MetadataFieldsDialog
 import dev.jyotiraditya.echoir.presentation.screens.settings.components.RegionDialog
 
 @Composable
@@ -50,6 +54,7 @@ fun SettingsScreen(
     var showResetDialog by remember { mutableStateOf(false) }
     var showClearDataDialog by remember { mutableStateOf(false) }
     var showRegionDialog by remember { mutableStateOf(false) }
+    var showMetadataFieldsDialog by remember { mutableStateOf(false) }
 
     val dirPicker = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenDocumentTree()
@@ -121,6 +126,16 @@ fun SettingsScreen(
         )
     }
 
+    if (showMetadataFieldsDialog) {
+        MetadataFieldsDialog(
+            selectedFields = state.selectedMetadataFields,
+            onSelectFields = { fields ->
+                viewModel.updateMetadataFields(fields)
+            },
+            onDismiss = { showMetadataFieldsDialog = false }
+        )
+    }
+
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -157,6 +172,19 @@ fun SettingsScreen(
                     }
                 },
                 position = PreferencePosition.Top
+            )
+        }
+
+        item {
+            PreferenceItem(
+                title = "Metadata Fields",
+                subtitle = buildString {
+                    append("${state.selectedMetadataFields.size} selected")
+                    append(" (${MetadataField.entries.count { it.category == MetadataCategory.CORE }} core)")
+                },
+                icon = Icons.Outlined.EditNote,
+                onClick = { showMetadataFieldsDialog = true },
+                position = PreferencePosition.Middle
             )
         }
 

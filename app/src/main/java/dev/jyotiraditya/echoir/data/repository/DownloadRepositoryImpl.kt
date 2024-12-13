@@ -14,6 +14,8 @@ import dev.jyotiraditya.echoir.data.remote.api.ApiService
 import dev.jyotiraditya.echoir.data.remote.mapper.PlaybackMapper.toDomain
 import dev.jyotiraditya.echoir.domain.model.Download
 import dev.jyotiraditya.echoir.domain.model.DownloadStatus
+import dev.jyotiraditya.echoir.domain.model.MetadataCategory
+import dev.jyotiraditya.echoir.domain.model.MetadataField
 import dev.jyotiraditya.echoir.domain.model.PlaybackRequest
 import dev.jyotiraditya.echoir.domain.model.PlaybackResponse
 import dev.jyotiraditya.echoir.domain.repository.DownloadRepository
@@ -38,6 +40,29 @@ class DownloadRepositoryImpl @Inject constructor(
 
     companion object {
         private const val TAG = "DownloadRepository"
+    }
+
+    private suspend fun filterMetadata(metadata: Map<String, String>): Map<String, String> {
+        val selectedFields = settingsRepository.getSelectedMetadataFields()
+
+        return buildMap {
+            // Always include core metadata
+            metadata.filterKeys { key ->
+                MetadataField.fromKey(key)?.category == MetadataCategory.CORE
+            }.forEach { (key, value) ->
+                put(key, value)
+            }
+
+            // Include selected non-core metadata
+            metadata.filterKeys { key ->
+                MetadataField.fromKey(key)?.let { field ->
+                    field.category != MetadataCategory.CORE &&
+                            field in selectedFields
+                } ?: false
+            }.forEach { (key, value) ->
+                put(key, value)
+            }
+        }
     }
 
     override suspend fun createAlbumDirectory(albumTitle: String, explicit: Boolean): String {
@@ -113,7 +138,8 @@ class DownloadRepositoryImpl @Inject constructor(
             }
 
             // Embed metadata while file is still in cache
-            metadataManager.embedMetadata(cacheFile.absolutePath, metadata)
+            val filteredMetadata = filterMetadata(metadata)
+            metadataManager.embedMetadata(cacheFile.absolutePath, filteredMetadata)
 
             // Get download info and generate filename
             val download =
