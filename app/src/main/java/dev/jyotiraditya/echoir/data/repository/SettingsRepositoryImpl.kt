@@ -9,6 +9,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.jyotiraditya.echoir.domain.model.FileNamingFormat
+import dev.jyotiraditya.echoir.domain.model.MetadataField
 import dev.jyotiraditya.echoir.domain.repository.SettingsRepository
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
@@ -24,6 +25,7 @@ class SettingsRepositoryImpl @Inject constructor(
         val OUTPUT_DIRECTORY = stringPreferencesKey("output_directory")
         val FILE_NAMING_FORMAT = intPreferencesKey("file_naming_format")
         val REGION = stringPreferencesKey("region")
+        val SELECTED_METADATA_FIELDS = stringPreferencesKey("selected_metadata_fields")
     }
 
     override suspend fun getOutputDirectory(): String? {
@@ -58,6 +60,19 @@ class SettingsRepositoryImpl @Inject constructor(
     override suspend fun setRegion(region: String) {
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.REGION] = region
+        }
+    }
+
+    override suspend fun getSelectedMetadataFields(): Set<MetadataField> {
+        val savedFields = context.dataStore.data.first()[PreferencesKeys.SELECTED_METADATA_FIELDS]
+        return savedFields?.split(",")?.mapNotNull { MetadataField.fromKey(it) }?.toSet()
+            ?: MetadataField.entries.toSet()
+    }
+
+    override suspend fun setSelectedMetadataFields(fields: Set<MetadataField>) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.SELECTED_METADATA_FIELDS] = fields
+                .joinToString(",") { it.key }
         }
     }
 }
