@@ -1,5 +1,6 @@
 package dev.jyotiraditya.echoir.presentation.screens.home.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,14 +23,49 @@ import dev.jyotiraditya.echoir.R
 import dev.jyotiraditya.echoir.domain.model.Download
 import dev.jyotiraditya.echoir.domain.model.DownloadStatus
 import dev.jyotiraditya.echoir.presentation.components.TrackCover
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.widget.Toast
+import androidx.compose.ui.platform.LocalContext
+import java.io.File
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.core.content.FileProvider
+import kotlinx.coroutines.launch
 
 @Composable
 fun DownloadItem(
     download: Download,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+
     ListItem(
-        modifier = modifier,
+        modifier = modifier.clickable {
+            coroutineScope.launch {
+                val file = File(download.filePath)
+
+                val uri: Uri = FileProvider.getUriForFile(
+                    context,
+                    context.packageName + ".fileprovider",
+                    file
+                )
+
+                val intent = Intent(Intent.ACTION_VIEW)
+                intent.setDataAndType(uri, "audio/*")
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+
+                val packageManager = context.packageManager
+                val activities = packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)
+
+                if (activities.isNotEmpty()) {
+                    context.startActivity(intent)
+                } else {
+                    Toast.makeText(context, "No music player found", Toast.LENGTH_SHORT).show()
+                }
+            }
+        },
         overlineContent = {
             Text(
                 text = when (download.quality) {
