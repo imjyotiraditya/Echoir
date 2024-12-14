@@ -113,7 +113,12 @@ class DownloadRepositoryImpl @Inject constructor(
             }
 
             // Embed metadata while file is still in cache
-            metadataManager.embedMetadata(cacheFile.absolutePath, metadata)
+            val selectedFields = settingsRepository.getSelectedMetadataFields()
+            val filteredMetadata = metadata.filterKeys { key ->
+                selectedFields.any { it.key == key }
+            }
+
+            metadataManager.embedMetadata(cacheFile.absolutePath, filteredMetadata)
 
             // Get download info and generate filename
             val download =
